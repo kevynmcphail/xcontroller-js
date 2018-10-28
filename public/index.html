@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+  <head>
+      <title></title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="/js/jquery-3.2.1.min.js"></script>
+      <link rel="shortcut icon" href="favicon.ico">
+      <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+  </head>
+
+<body>
+  <div class="container" style="width: 100%">
+    <div id="left-col" class="container" style="width: 50%; float: left;">
+
+      <div id="query">
+
+          <h2>Query</h2>
+          <div class =  "col-sm-8">
+            <input id="query-command" type="text" class="form-control" placeholder="Command">
+          </div>
+          <div class =  "col-sm-4">
+            <button class="b0 btn btn-primary" style="width: 100%; ">Send</button>
+          </div>
+          <div class =  "col-sm-3" style="padding-top: 10px;">
+            <button class="b1 btn" style="width: 100%; ">Position</button>
+          </div>
+          <div class =  "col-sm-3" style="padding-top: 10px;">
+            <button class="b2 btn" style="width: 100%; ">Velocitiy</button>
+          </div>
+          <div class =  "col-sm-3" style="padding-top: 10px;">
+            <button class="b3 btn" style="width: 100%; ">Accel</button>
+          </div>
+          <div class =  "col-sm-3" style="padding-top: 10px; padding-bottom: 10px;">
+            <button class="b4 btn" style="width: 100%; ">Decel</button>
+          </div>
+        
+      </div>
+      
+      <div id="velocity" > 
+
+        <h2>Velocity</h2>
+        <div class =  "col-sm-12" >
+          <input id="vel-vel" type="text" class="form-control" placeholder="Velocity">
+        </div>
+        <div class =  "col-sm-12" style="width: 100%; padding-top: 10px;">
+          <input id="vel-acc" type="text" class="form-control" placeholder="Acceleration">
+        </div>
+        <div class =  "col-sm-12" style="width: 100%; padding-top: 10px;">
+          <input id="vel-dec" type="text" class="form-control" placeholder="Deceleration">
+        </div>
+        <div class =  "col-sm-9" style="padding-top: 10px;">
+          <button class="b5 btn btn-success" style="width: 100%; ">Go</button>
+        </div>
+        <div class =  "col-sm-3" style="padding-top: 10px; padding-bottom: 10px;">
+          <button class="b6 btn btn-danger" style="width: 100%; ">STOP</button>
+        </div>
+
+      </div>
+      
+      <div id="position"> 
+
+        <h2>Position</h2>
+        <div class =  "col-sm-12" >
+          <input id="pos-pos" type="text" class="form-control" placeholder="Position">
+        </div>
+        <div class =  "col-sm-12" style="width: 100%; padding-top: 10px;">
+          <input id="pos-vel" type="text" class="form-control" placeholder="Velocity">
+        </div>
+        <div class =  "col-sm-12" style="width: 100%; padding-top: 10px;">
+          <input id="pos-acc" type="text" class="form-control" placeholder="Acceleration">
+        </div>
+        <div class =  "col-sm-12" style="width: 100%; padding-top: 10px;">
+          <input id="pos-dec" type="text" class="form-control" placeholder="Deceleration">
+        </div>
+        <div class =  "col-sm-4" style="padding-top: 10px;">
+          <button class="b7 btn btn-success" style="width: 100%; ">Relative Move</button>
+        </div>
+        <div class =  "col-sm-4" style="padding-top: 10px;">
+          <button class="b8 btn btn-warning" style="width: 100%; ">Absolute Move</button>
+        </div>
+        <div class =  "col-sm-4" style="padding-top: 10px; padding-bottom: 10px;">
+          <button class="b9 btn btn-danger" style="width: 100%; ">STOP</button>
+        </div>
+
+      </div>
+
+      <div id="jog" > 
+
+        <h2 >Jog</h2>
+        <div class =  "col-sm-12" style="width: 100%;">
+          <input id="jog-vel" type="text" class="form-control" placeholder="Velocity">
+        </div>
+        <div class =  "col-sm-12" style="width: 100%; padding-top: 10px;">
+          <input id="jog-acc" type="text" class="form-control" placeholder="Acceleration">
+        </div>
+        <div class =  "col-sm-12" style="width: 100%; padding-top: 10px;">
+          <input id="jog-dec" type="text" class="form-control" placeholder="Deceleration">
+        </div>
+        <div class =  "col-sm-6" style="padding-top: 10px;">
+          <button class="b10 btn btn-success" style="width: 100%; ">Clockwise</button>
+        </div>
+        <div class =  "col-sm-6" style="padding-top: 10px; padding-bottom: 10px;">
+          <button class="b11 btn btn-warning" style="width: 100%; ">Counter Clockwise</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+
+    var socket = io('/controller');
+
+    socket.on('connect', function() {
+      console.log('Connected to Server');
+    })
+
+    socket.on('message', function(data) {
+      console.log(data);
+    })
+
+
+    $('.btn').mousedown(function(e) {
+      console.log('button clicked!');
+      e.preventDefault();
+      var _this = $(this);
+
+
+      // QUERY ------------------------------------------------------------------------------------
+
+      if (_this.hasClass('b0')){
+        console.log('Button 0 - Query')
+        var command = document.getElementById('query-command').value;
+
+        socket.emit('query', command);
+      }
+
+      if (_this.hasClass('b1')){
+        console.log('Button 1 - Query Position')
+        var command = 'EP';
+
+        socket.emit('query', command);
+      }
+
+      if (_this.hasClass('b2')){
+        console.log('Button 2 - Query Velocity')
+        var command = 'VE';
+
+        socket.emit('query', command);
+      }
+
+      if (_this.hasClass('b3')){
+        console.log('Button 3 - Query Acceleration')
+        var command = 'AC';
+
+        socket.emit('query', command);
+      }
+
+      if (_this.hasClass('b4')){
+        console.log('Button 4 - Query Deceleration')
+        var command = 'DE';
+
+        socket.emit('query', command);
+      }
+
+      // VELOCITY  --------------------------------------------------------------------------------
+      
+      if (_this.hasClass('b5')){
+        console.log('Button 5 - Velocity Move')
+        var v = parseFloat(document.getElementById('vel-vel').value);
+        var a = parseFloat(document.getElementById('vel-acc').value);
+        var d = parseFloat(document.getElementById('vel-dec').value);
+
+        if (d == null) {
+          d = a;
+        } 
+
+        var packet = {
+          velocity: v,
+          acceleration: a, 
+          deceleration: d
+        }
+
+        socket.emit('move-velocity', packet);
+      }
+
+      if (_this.hasClass('b6')){
+        console.log('Button 5 - Velocity Stop')
+        var command = 'SJ';
+
+        socket.emit('query', command);
+      }
+
+      // POSITION  --------------------------------------------------------------------------------
+      
+      if (_this.hasClass('b7')){
+        console.log('Button 7 - Relative Position Move')
+        var p = parseInt(document.getElementById('pos-pos').value);
+        var v = parseFloat(document.getElementById('pos-vel').value);
+        var a = parseFloat(document.getElementById('pos-acc').value);
+        var d = parseFloat(document.getElementById('pos-dec').value);
+       
+        if (d == null) {
+          d = a;
+        } 
+
+        var packet = {
+          position: p,
+          velocity: v,
+          acceleration: a, 
+          deceleration: d
+        }
+
+        socket.emit('move-position-rel', packet);
+      }
+
+      if (_this.hasClass('b8')){
+        console.log('Button 8 - Absolute Position Move')
+        var p = parseInt(document.getElementById('pos-pos').value);
+        var v = parseFloat(document.getElementById('pos-vel').value);
+        var a = parseFloat(document.getElementById('pos-acc').value);
+        var d = parseFloat(document.getElementById('pos-dec').value);
+       
+        if (d == null) {
+          d = a;
+        } 
+
+        var packet = {
+          position: p,
+          velocity: v,
+          acceleration: a, 
+          deceleration: d
+        }
+
+        socket.emit('move-position-abs', packet);
+      }
+
+      if (_this.hasClass('b9')){
+        console.log('Button 9 - Position Stop')
+        var command = 'SKD';
+
+        socket.emit('query', command);
+      }
+
+      if (_this.hasClass('b10')){
+        console.log('Button 10 - Clockwise Jog')
+        var v = parseFloat(document.getElementById('jog-vel').value);
+        var a = parseFloat(document.getElementById('jog-acc').value);
+        var d = parseFloat(document.getElementById('jog-dec').value);
+       
+        if (d == null) {
+          d = a;
+        } 
+
+        var packet = {
+          direction: 'CW',
+          velocity: v,
+          acceleration: a, 
+          deceleration: d
+        }
+
+        socket.emit('jog-cw', packet);
+      }
+
+      if (_this.hasClass('b11')){
+        console.log('Button 11 - Counter Clockwise Jog')
+        var v = parseFloat(document.getElementById('jog-vel').value);
+        var a = parseFloat(document.getElementById('jog-acc').value);
+        var d = parseFloat(document.getElementById('jog-dec').value);
+       
+        if (d == null) {
+          d = a;
+        } 
+
+        var packet = {
+          direction: 'CCW',
+          velocity: v,
+          acceleration: a, 
+          deceleration: d
+        }
+
+        socket.emit('jog-ccw', packet);
+      }
+
+    });
+
+    //-------------------------------------------------------------------------------------------
+    // MOUSE UP ---------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------
+
+    $('.btn').mouseup(function(e) {
+      //console.log('button released!');
+      e.preventDefault();
+      var _this = $(this);
+
+      if (_this.hasClass('b10')){
+        console.log('Button 10 - Clockwise Jog - STOP')
+        var command = 'SJ';
+
+        socket.emit('query', command);
+      }
+
+      if (_this.hasClass('b11')){
+        console.log('Button 11 - Counter Clockwise Jog - STOP')
+        var command = 'SJ';
+
+        socket.emit('query', command);
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
+<!-- <script src="http://localhost:8196/socket.io/socket.io.js"></script><script>var socket = io.connect("http://localhost:8196");socket.on("reload", function(){window.location.reload()});</script> -->
